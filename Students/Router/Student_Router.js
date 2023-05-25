@@ -428,10 +428,16 @@ router.patch('/update_student_details/:id', fetchadmin, [
             return res.status(400).json({ success, error: "U can't update the details" })
         }
 
-        let s_mob = await Students.findOne({ S_mobile_no: req.body.S_mobile_no });
-        if (s_mob) {
-            success = false
-            return res.status(400).json({ success, error: "Sorry students with this Mobile num already exists" })
+        const loggedInUserId = req.params.id;
+
+        const users = await Students.find({ _id: { $ne: loggedInUserId } });
+
+        for (let index = 0; index < users.length; index++) {
+            const element = users[index];
+            if (element.S_mobile_no == S_mobile_no) {
+                success = false
+                return res.status(400).json({ success, error: "Sorry students with this Mobile num already exists" })
+            }
         }
 
         const standard = S_Class_code.substring(0, 2);
@@ -468,6 +474,7 @@ router.patch('/update_student_details/:id', fetchadmin, [
             success = false
             return res.status(400).json({ error: "Class Code doesn't exist" });
         }
+
     } catch (error) {
         console.error(error.message);
         res.status(500).send("some error occured");

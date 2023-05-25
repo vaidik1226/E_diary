@@ -451,10 +451,16 @@ router.patch('/update_teacher_details/:id', fetchadmin, [
             return res.status(400).json({ success, error: "U can't update the details" })
         }
 
-        let t_mob = await Teachers.findOne({ T_mobile_no: req.body.T_mobile_no });
-        if (t_mob) {
-            success = false
-            return res.status(400).json({ success, error: "Sorry teachers with this Mobile num already exists" })
+        const loggedInUserId = req.params.id;
+
+        const users = await Teachers.find({ _id: { $ne: loggedInUserId } });
+
+        for (let index = 0; index < users.length; index++) {
+            const element = users[index];
+            if (element.T_mobile_no == T_mobile_no) {
+                success = false
+                return res.status(400).json({ success, error: "Sorry teacher with this Mobile num already exists" })
+            }
         }
 
         let subjectCode = await Subjects.findOne({ Subject_Code: Subject_code })
