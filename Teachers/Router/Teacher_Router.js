@@ -1136,4 +1136,29 @@ router.post('/get_all_subjects_class_wise', fetchTeachers, [
 })
 
 
+// Router:24 Get ClassCode for teachers http://localhost:5050/api/teachers/get_all_classes
+router.post('/get_all_classes', fetchTeachers, async (req, res) => {
+    let success = false;
+    try {
+        let teacher = await Teachers.findById(req.teacher.id)
+        if (!teacher) {
+            success = false
+            res.send(500).json({ success, error: "Youy should login first" })
+        }
+
+        const classes = await Classes.find()
+        if (!classes) {
+            success = false
+            return res.status(400).json({ error: "This class code is already exist" });
+        }
+
+        res.json(classes);
+
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+})
+
 module.exports = router
