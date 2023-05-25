@@ -28,7 +28,7 @@ const Homework = require("../../Teachers/Models/Homework_Model")
 router.post('/create_students', fetchadmin, [
     body('S_icard_Id', 'Icard-id should be atlest 6 char').isLength({ min: 6 }),
     body('S_name', 'Name should be atlest 2 char').isLength({ min: 2 }),
-    body('S_mobile_no', 'Mobile Number should be atlest 10 char').isLength({ min: 10 }),
+    body('S_mobile_no', 'Mobile Number should be atlest 10 char').isLength({ min: 10, max: 10 }),
     body('S_address', 'Enter a valid data').isLength({ min: 10 }),
     body('S_standard', 'Enter a valid data').isLength({ min: 2 }),
     body('S_Class_code', 'Enter a valid data').isLength({ min: 2 }),
@@ -401,7 +401,7 @@ router.delete('/delete_complain/:id', fetchStudent, async (req, res) => {
 router.patch('/update_student_details/:id', fetchadmin, [
     body('S_icard_Id', 'Icard-id should be atlest 6 char').isLength({ min: 6 }),
     body('S_name', 'Name should be atlest 2 char').isLength({ min: 2 }),
-    body('S_mobile_no', 'Mobile Number should be atlest 10 char').isLength({ min: 10 }),
+    body('S_mobile_no', 'Mobile Number should be atlest 10 char').isLength({ min: 10, max: 10 }),
     body('S_address', 'Enter a valid data').isLength({ min: 10 }),
     body('S_standard', 'Enter a valid data').isLength({ min: 2 }),
     body('S_Class_code', 'Enter a valid data').isLength({ min: 2 }),
@@ -426,6 +426,12 @@ router.patch('/update_student_details/:id', fetchadmin, [
         if (!admin) {
             success = false
             return res.status(400).json({ success, error: "U can't update the details" })
+        }
+
+        let s_mob = await Students.findOne({ S_mobile_no: req.body.S_mobile_no });
+        if (s_mob) {
+            success = false
+            return res.status(400).json({ success, error: "Sorry students with this Mobile num already exists" })
         }
 
         const standard = S_Class_code.substring(0, 2);

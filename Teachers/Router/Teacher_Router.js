@@ -27,7 +27,7 @@ const Homework = require("../Models/Homework_Model")
 router.post('/create_teacher', fetchadmin, [
     body('T_icard_Id', 'icard-Id should be atlest 6 char').isLength({ min: 6 }),
     body('T_name', 'Name should be atlest 2 char').isLength({ min: 2 }),
-    body('T_mobile_no', 'Mobile No. should be atlest 10 char').isLength({ min: 10 }),
+    body('T_mobile_no', 'Mobile No. should be atlest 10 char').isLength({ min: 10, max: 10 }),
     body('T_address', 'Enter a valid data').isLength({ min: 10 }),
     body('Subject_code', 'Enter a valid data').isLength({ min: 4 }),
     body('T_Class_code', 'Enter a valid data').isLength({ min: 2 }),
@@ -424,7 +424,7 @@ router.delete('/delete_complain/:id', fetchTeachers, async (req, res) => {
 router.patch('/update_teacher_details/:id', fetchadmin, [
     body('T_icard_Id', 'Icard-id should be atlest 6 char').isLength({ min: 6 }),
     body('T_name', 'Name should be atlest 2 char').isLength({ min: 2 }),
-    body('T_mobile_no', 'Mobile Number should be atlest 10 char').isLength({ min: 10 }),
+    body('T_mobile_no', 'Mobile Number should be atlest 10 char').isLength({ min: 10, max: 10 }),
     body('T_address', 'Enter a valid data').isLength({ min: 10 }),
     body('Subject_code', 'Enter a valid data').isLength({ min: 2 }),
     body('T_Class_code', 'Enter a valid data').isLength({ min: 2 }),

@@ -24,7 +24,7 @@ router.post('/', async (req, res) => {
 
 // Router 1 :- Admin Login http://localhost:5050/api/admin/admin_login
 router.post('/admin_login', [
-    body('Mobile_no', 'Enter a valid mobile number').isLength({ min: 10 }),
+    body('Mobile_no', 'Enter a valid mobile number').isLength({ min: 10, max: 10 }),
     body('Password', 'Password cannot be blank').exists(),
 ], async (req, res) => {
     let success = false;
