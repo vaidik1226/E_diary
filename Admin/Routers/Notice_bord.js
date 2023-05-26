@@ -34,6 +34,7 @@ router.post('/send_notice', fetchadmin, noticeAttach.array("notice_attach"), [
 
     try {
         const files = req.files;
+        console.log(files);
         let Notice_attechments
         for (let i = 0; i < files.length; i++) {
             const { path } = files[i];

@@ -37,7 +37,7 @@ app.use("/api/timetable", require("./TimeTable/Router/Timetable_Router"))
 
 
 // Exam TimeTable
-app.use('/api/examtimetable',require("./Exam_TimeTable/Router/Exam_TimeTable_Router"))
+app.use('/api/examtimetable', require("./Exam_TimeTable/Router/Exam_TimeTable_Router"))
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`)

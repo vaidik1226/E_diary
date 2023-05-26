@@ -1064,8 +1064,15 @@ router.delete('/delete_homework/:id', fetchTeachers, async (req, res) => {
 
 
 // Router 21:- Fetch all homeworks of the teachers http://localhost:5050/api/teachers/fetch_all_homeworks
-router.post('/fetch_all_homeworks', fetchTeachers, async (req, res) => {
+router.post('/fetch_all_homeworks', fetchTeachers, [
+    body('Class_code', 'Please enter currect class code').isLength({ min: 3, max: 3 }),
+], async (req, res) => {
     let success = false
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const { Class_code } = req.body;
     try {
         let fetchTeacher = await Teachers.findById(req.teacher.id)
         if (!fetchTeacher) {
@@ -1073,8 +1080,36 @@ router.post('/fetch_all_homeworks', fetchTeachers, async (req, res) => {
             res.send(500).json({ success, error: "Youy should login first" })
         }
 
-        let homework = await Homework.find({ T_icard_Id: fetchTeacher.T_icard_Id })
-        res.json(homework)
+        const standard = Class_code.substring(0, 2);
+        let std = await Classes.findOne({ Standard: standard })
+        if (!std) {
+            success = false
+            return res.status(400).json({ success, error: "Please Chooes correct class code" })
+        }
+
+        const ClassCode = std.ClassCode;
+
+        const allHomeWork = []
+
+        if (ClassCode.includes(Class_code)) {
+            let homework = await Homework.find({ T_icard_Id: fetchTeacher.T_icard_Id })
+            if (homework.length > 0) {
+                for (let index = 0; index < homework.length; index++) {
+                    const element = homework[index];
+                    if (element.Class_code === Class_code) {
+                        allHomeWork.push(element)
+                    }
+                }
+                res.json(allHomeWork)
+            }
+            else {
+                success = false
+                res.json({ success, error: "No homework found" })
+            }
+        } else {
+            success = false
+            return res.status(400).json({ error: "Class Code doesn't exist" });
+        }
     } catch (error) {
         console.error(error.message);
         res.status(500).send("some error occured");
