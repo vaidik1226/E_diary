@@ -34,66 +34,75 @@ router.post('/make_timetable', fetchAdmin, [
         return res.status(400).json({ success, error: "Sorry U should ligin first" })
     }
 
-    let classcode = await Classes.findOne({ Classcode: Class_code })
-    if (!classcode) {
+    const standard = Class_code.substring(0, 2);
+    let std = await Classes.findOne({ Standard: standard })
+    if (!std) {
         success = false
         return res.status(400).json({ success, error: "Please Chooes correct class code" })
     }
 
-    let classcode2 = await TimeTable.findOne({ Class_code: Class_code })
-    if (classcode2) {
-        success = false
-        return res.status(400).json({ success, error: "TimeTable already exist" })
-    }
+    const ClassCode = std.ClassCode;
 
     try {
+        if (ClassCode.includes(Class_code)) {
 
-        const subjectCode = []
-        const icardId = []
+            let classcode2 = await TimeTable.findOne({ Class_code: Class_code })
+            if (classcode2) {
+                success = false
+                return res.status(400).json({ success, error: "TimeTable already exist" })
+            }
 
-        // Iterate over the weekdays
-        Object.values(Daily_TimeTable[0]).forEach((schedule) => {
-            // Iterate over the schedule of each weekday
-            Object.values(schedule).forEach((lesson) => {
-                subjectCode.push(lesson.Subject_Code);
-                icardId.push(lesson.T_icard_Id);
+
+            const subjectCode = []
+            const icardId = []
+
+            // Iterate over the weekdays
+            Object.values(Daily_TimeTable[0]).forEach((schedule) => {
+                // Iterate over the schedule of each weekday
+                Object.values(schedule).forEach((lesson) => {
+                    subjectCode.push(lesson.Subject_Code);
+                    icardId.push(lesson.T_icard_Id);
+                });
             });
-        });
 
 
-        for (let index = 0; index < subjectCode.length; index++) {
-            const element = subjectCode[index];
-            const fetchsubject = await Subjects.findOne({ Subject_Code: element });
-            if (!fetchsubject) {
-                success = false
-                return res.status(400).json({ success, error: "Please Chooes correct subject code" })
+            for (let index = 0; index < subjectCode.length; index++) {
+                const element = subjectCode[index];
+                const fetchsubject = await Subjects.findOne({ Subject_Code: element });
+                if (!fetchsubject) {
+                    success = false
+                    return res.status(400).json({ success, error: "Please Chooes correct subject code" })
+                }
             }
-        }
 
-        for (let index = 0; index < icardId.length; index++) {
-            const element = icardId[index];
-            const fetchicard = await Teachers.findOne({ T_icard_Id: element });
-            if (!fetchicard) {
-                success = false
-                return res.status(400).json({ success, error: "Please Chooes correct teacher id" })
+            for (let index = 0; index < icardId.length; index++) {
+                const element = icardId[index];
+                const fetchicard = await Teachers.findOne({ T_icard_Id: element });
+                if (!fetchicard) {
+                    success = false
+                    return res.status(400).json({ success, error: "Please Chooes correct teacher id" })
+                }
             }
-        }
 
 
-        let timeyable = new TimeTable({
-            Class_code, Daily_TimeTable
-        })
+            let timeyable = new TimeTable({
+                Class_code, Daily_TimeTable
+            })
 
-        Addtimeyable = await timeyable.save();
-        const data = {
-            Addtimeyable: {
-                id: Addtimeyable.id
+            Addtimeyable = await timeyable.save();
+            const data = {
+                Addtimeyable: {
+                    id: Addtimeyable.id
+                }
             }
-        }
 
-        const authtoken = jwt.sign(data, JWT_SECRET);
-        success = true;
-        res.json({ success, authtoken });
+            const authtoken = jwt.sign(data, JWT_SECRET);
+            success = true;
+            res.json({ success, authtoken });
+        } else {
+            success = false
+            return res.status(400).json({ error: "Class Code doesn't exist" });
+        }
 
     } catch (error) {
         console.error(error.message);
@@ -121,22 +130,29 @@ router.post('/fetch_all_timetable_by_classes', fetchAdmin, [
         return res.status(400).json({ success, error: "Sorry U should ligin first" })
     }
 
-    let classcode = await Classes.findOne({ Classcode: Class_code })
-    if (!classcode) {
+    const standard = Class_code.substring(0, 2);
+    let std = await Classes.findOne({ Standard: standard })
+    if (!std) {
         success = false
         return res.status(400).json({ success, error: "Please Chooes correct class code" })
     }
 
+    const ClassCode = std.ClassCode;
+
     try {
+        if (ClassCode.includes(Class_code)) {
 
-        let timetable = await TimeTable.findOne({ Class_code: Class_code })
-        if (!timetable) {
+            let timetable = await TimeTable.findOne({ Class_code: Class_code })
+            if (!timetable) {
+                success = false
+                return res.status(400).json({ success, error: "not found" })
+            }
+
+            res.json({ timetable });
+        } else {
             success = false
-            return res.status(400).json({ success, error: "not found" })
+            return res.status(400).json({ error: "Class Code doesn't exist" });
         }
-
-        res.json({ timetable });
-
     } catch (error) {
         console.error(error.message);
         res.status(500).send("some error occured");
@@ -286,14 +302,6 @@ router.post('/fetch_all_lectures_of_the_teachers', fetchTeachers, [
                         const subjectCode = subject.Subject_Code;
                         const timeFrom = subject.Time_From;
                         const timeTo = subject.TIme_TO;
-
-                        console.log(day);
-                        console.log(element.Class_code)
-                        console.log(`Subject Code: ${subjectCode}`);
-                        console.log(`Teacher ID: ${teacherId}`);
-                        console.log(`Time: ${timeFrom} - ${timeTo}`);
-                        console.log('---');
-
                         const datas = {
                             weekday: day,
                             class_code: element.Class_code,
