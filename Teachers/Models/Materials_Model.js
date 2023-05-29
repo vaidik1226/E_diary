@@ -26,7 +26,7 @@ const MaterialSchema = new Schema({
         type: String,
         require: true
     },
-    Date:{
+    Date: {
         type: Date,
         default: Date.now
     }

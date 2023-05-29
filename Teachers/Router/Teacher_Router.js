@@ -618,7 +618,7 @@ router.post('/get_all_holidays_of_teachers', fetchTeachers, async (req, res) => 
 
 
 // Router 14:- Add Subject materials http://localhost:5050/api/teachers/add_material
-router.post('/add_material', fetchTeachers, Material_Files.array("material_file"), [
+router.post('/add_material', fetchTeachers, Material_Files.single("material_file"), [
     body('T_icard_Id', 'ID should be atlest 6 char').isLength({ min: 6 }),
     body('Subject_code', 'Please enter currect subjectr code').isLength({ min: 5, max: 5 }),
     body('Class_code', 'Please enter currect class code').isLength({ min: 3, max: 3 }),
@@ -663,12 +663,9 @@ router.post('/add_material', fetchTeachers, Material_Files.array("material_file"
     if (ClassCode.includes(Class_code)) {
 
         try {
-            const files = req.files;
-            let Material_files
-            for (let i = 0; i < files.length; i++) {
-                const { path } = files[i];
-                Material_files = path
-            }
+            const { filename } = req.file;
+
+            const Material_files = filename
 
             let material = new Material({
                 T_icard_Id, Subject_code, Class_code, Material_title, Material_description, Material_files
@@ -697,7 +694,7 @@ router.post('/add_material', fetchTeachers, Material_Files.array("material_file"
 
 
 // Router 15:- Edit Subject materials http://localhost:5050/api/teachers/edit_material/:{id}
-router.patch('/edit_material/:id', fetchTeachers, Material_Files.array("material_file"), [
+router.patch('/edit_material/:id', fetchTeachers, Material_Files.single("material_file"), [
     body('T_icard_Id', 'ID should be atlest 6 char').isLength({ min: 6 }),
     body('Subject_code', 'Please enter currect subjectr code').isLength({ min: 5, max: 5 }),
     body('Class_code', 'Please enter currect class code').isLength({ min: 3, max: 3 }),
@@ -750,12 +747,7 @@ router.patch('/edit_material/:id', fetchTeachers, Material_Files.array("material
         try {
             const nameOfFile = material.Material_files;
 
-            const files = req.files;
-            let filename
-            for (let i = 0; i < files.length; i++) {
-                const { path } = files[i];
-                filename = path
-            }
+            const { filename } = req.file;
 
             const newMaterial = {};
             if (T_icard_Id) { newMaterial.T_icard_Id = T_icard_Id };
@@ -767,7 +759,7 @@ router.patch('/edit_material/:id', fetchTeachers, Material_Files.array("material
 
             const dirPath = __dirname;  // C: \Users\admin\Desktop\E_diary\Teachers\Router
             const dirname = dirPath.slice(0, -16);
-            const filePath = dirname + '/' + nameOfFile;  // C: \Users\admin\Desktop\E_diary
+            const filePath = dirname + '/Material/' + nameOfFile;  // C: \Users\admin\Desktop\E_diary
             fs.unlink(filePath, (err) => {
                 if (err) {
                     console.error(err);
@@ -822,7 +814,7 @@ router.delete('/delete_material/:id', fetchTeachers, async (req, res) => {
 
         const dirPath = __dirname;  // C: \Users\admin\Desktop\E_diary\Teachers\Router
         const dirname = dirPath.slice(0, -16);
-        const filePath = dirname + '/' + nameOfFile;  // C: \Users\admin\Desktop\E_diary\
+        const filePath = dirname + '/Material/' + nameOfFile;  // C: \Users\admin\Desktop\E_diary
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error(err);

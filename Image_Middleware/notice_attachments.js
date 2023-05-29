@@ -1,17 +1,26 @@
 const multer = require('multer');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
 
-const imgconfig = multer.diskStorage({
-    destination: (req, file, callback) => {
-        callback(null, "./Notices")
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        // Set the destination folder where the files will be stored
+        const uploadPath = 'Notices/';
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath);
+        }
+        cb(null, uploadPath);
     },
-    filename: (req, file, callback) => {
-        callback(null, `notice-${Date.now()}. ${file.originalname}`)
+    filename: (req, file, cb) => {
+        // Generate a unique filename for each uploaded file
+        const extension = file.originalname.split('.').pop();
+        const filename = `${uuidv4()}.${extension}`;
+        cb(null, filename);
     }
-})
-
-
-const noticeAttach = multer({
-    storage: imgconfig
 });
+
+const noticeAttach = multer({ storage });
+
+
 
 module.exports = noticeAttach

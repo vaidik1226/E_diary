@@ -13,7 +13,7 @@ const fs = require("fs")
 
 
 // Router 1:- Send Notice  http://localhost:5050/api/noticeBord/send_notice
-router.post('/send_notice', fetchadmin, noticeAttach.array("notice_attach"), [
+router.post('/send_notice', fetchadmin, noticeAttach.single("notice_attach"), [
     body('Notice_title', 'Title should be atlest 6 char').isLength({ min: 6 }),
     body('Notice_description', 'Decription should be atlest 10 char').isLength({ min: 10 }),
     body('Group', 'Please Chooes the group').isLength({ min: 2 }),
@@ -33,13 +33,8 @@ router.post('/send_notice', fetchadmin, noticeAttach.array("notice_attach"), [
     }
 
     try {
-        const files = req.files;
-        console.log(files);
-        let Notice_attechments
-        for (let i = 0; i < files.length; i++) {
-            const { path } = files[i];
-            Notice_attechments = path
-        }
+        const { filename } = req.file;
+        let Notice_attechments = filename
 
         let noticeBord = new NoticeBord({
             Admin_id: req.admin.id, Notice_title, Notice_description, Notice_attechments, Group
@@ -81,7 +76,7 @@ router.post('/get_all_notice', fetchadmin, async (req, res) => {
 
 
 // Router 3:- Edit Notice  http://localhost:5050/api/noticeBord/edit_Notice/{id}
-router.patch('/edit_notice/:id', fetchadmin, noticeAttach.array("notice_attach"), [
+router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"), [
     body('Notice_title', 'Title should be atlest 6 char').isLength({ min: 6 }),
     body('Notice_description', 'Decription should be atlest 10 char').isLength({ min: 10 }),
     body('Group', 'Please Chooes the group').isLength({ min: 2 }),
@@ -108,12 +103,7 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.array("notice_attach")
 
         const nameOfFile = notice.Notice_attechments;
 
-        const files = req.files;
-        let filename
-        for (let i = 0; i < files.length; i++) {
-            const { path } = files[i];
-            filename = path
-        }
+        const { filename } = req.file;
 
         const newNotice = {};
         if (Notice_title) { newNotice.Notice_title = Notice_title };
@@ -123,7 +113,7 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.array("notice_attach")
 
         const dirPath = __dirname;   //C:\Users\admin\Desktop\E_diary\Admin\Routers
         const dirname = dirPath.slice(0, -13);
-        const filePath = dirname + nameOfFile;    //C:\Users\admin\Desktop\E_diary
+        const filePath = dirname + '/Notices/' + nameOfFile;    //C:\Users\admin\Desktop\E_diary
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error(err);
@@ -174,7 +164,7 @@ router.delete('/delete_notice/:id', fetchadmin, async (req, res) => {
 
         const dirPath = __dirname;   //C:\Users\admin\Desktop\E_diary\Admin\Routers
         const dirname = dirPath.slice(0, -13);
-        const filePath = dirname + nameOfFile;    //C:\Users\admin\Desktop\E_diary
+        const filePath = dirname + '/Notices/' + nameOfFile;    //C:\Users\admin\Desktop\E_diary
         fs.unlink(filePath, (err) => {
             if (err) {
                 console.error(err);
