@@ -17,6 +17,10 @@ const Student_complain_box_Schema = new Schema({
     T_icard_Id: {
         type: String,
         require: true
+    },
+    Date: {
+        type: Date,
+        default: Date.now()
     }
 });
 
