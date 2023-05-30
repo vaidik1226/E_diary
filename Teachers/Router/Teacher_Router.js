@@ -36,7 +36,8 @@ router.post('/create_teacher', fetchadmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { T_icard_Id, T_name, T_mobile_no, T_address, Subject_code, T_Class_code, T_Password } = req.body;
     try {
