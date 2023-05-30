@@ -9,7 +9,6 @@ const Students = require('../../Students/Models/Student_Model')
 const Notice = require('../../Admin/Models/Notice_bord')
 require('dotenv').config()
 const JWT_SECRET = process.env.JWT_SECRET;
-// const upload = require('../../Image_Middleware/upload_imgs')
 const Student_complain_box = require('../../Students/Models/Student_complain_box')
 const Teacher_complain_box = require('../Models/Teacher_complain_box')
 const Admin = require("../../Admin/Models/Admin_Model")
