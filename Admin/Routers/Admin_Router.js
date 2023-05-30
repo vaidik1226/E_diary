@@ -663,4 +663,69 @@ router.post('/fetch_all_homeworks_of_the_subject', fetchadmin, [
     }
 })
 
+
+// Router 19:- Fetch the count of the Students http://localhost:5050/api/admin/fetch_count_of_the_Students
+router.post('/fetch_count_of_the_Students', fetchadmin, async (req, res) => {
+    let success = false;
+    try {
+        const fetchAdmin = await Admin.findById(req.admin.id);
+        if (!fetchAdmin) {
+            success = false
+            return res.status(400).json({ success, error: "Sorry U should ligin first" })
+        }
+        const allStudents = await Students.find()
+        res.json({ count: allStudents.length });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("some error occured");
+    }
+})
+
+
+// Router 20:- Fetch the count of the teachers http://localhost:5050/api/admin/fetch_count_of_the_teachers
+router.post('/fetch_count_of_the_teachers', fetchadmin, async (req, res) => {
+    let success = false;
+    try {
+        const fetchAdmin = await Admin.findById(req.admin.id);
+        if (!fetchAdmin) {
+            success = false
+            return res.status(400).json({ success, error: "Sorry U should ligin first" })
+        }
+        const allTeachers = await Teachers.find()
+        res.json({ count: allTeachers.length });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("some error occured");
+    }
+})
+
+// Router 20:- Fetch the count of the classes http://localhost:5050/api/admin/fetch_count_of_the_classes
+router.post('/fetch_count_of_the_classes', fetchadmin, async (req, res) => {
+    let success = false;
+    try {
+        const fetchAdmin = await Admin.findById(req.admin.id);
+        if (!fetchAdmin) {
+            success = false
+            return res.status(400).json({ success, error: "Sorry U should ligin first" })
+        }
+        const allClasses = await Classes.find()
+        const data = []
+        for (let i = 0; i < allClasses.length; i++) {
+            const element = allClasses[i];
+            data.push(element.ClassCode)
+        }
+        
+        let total = 0;
+        data.forEach(arr => {
+            arr.forEach(() => {
+                total = total + 1;
+            });
+        });
+        res.json({ count: total });
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("some error occured");
+    }
+})
+
 module.exports = router
