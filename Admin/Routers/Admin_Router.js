@@ -31,7 +31,8 @@ router.post('/admin_login', [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
 
     const { Mobile_no, Password } = req.body;
@@ -91,6 +92,11 @@ router.post('/fetch_all_Students', fetchadmin, [
 ], async (req, res) => {
     let success = false;
     const { S_Class_code } = req.body;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
+    }
     try {
         const fetchAdmin = await Admin.findById(req.admin.id);
         if (!fetchAdmin) {
@@ -178,7 +184,8 @@ router.post('/send_event', fetchadmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Event_title, Event_description, Event_Start, Event_End, Groups } = req.body;
 
@@ -237,7 +244,8 @@ router.patch('/edit_Events/:id', fetchadmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Event_title, Event_description, Event_Start, Event_End, Groups } = req.body;
     try {
@@ -259,6 +267,7 @@ router.patch('/edit_Events/:id', fetchadmin, [
         if (Event_Start) { newEvents.Event_Start = Event_Start };
         if (Event_End) { newEvents.Event_End = Event_End };
         if (Groups) { newEvents.Groups = Groups };
+        newEvents.Date = Date.now()
 
         events = await Events.findByIdAndUpdate(req.params.id, { $set: newEvents })
 
@@ -328,7 +337,8 @@ router.post('/send_holiday', fetchadmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Holiday_title, Holiday_description, Holiday_Start, Holiday_End, Groups } = req.body;
 
@@ -389,7 +399,8 @@ router.patch('/edit_holidays/:id', fetchadmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Holiday_title, Holiday_description, Holiday_Start, Holiday_End, Groups } = req.body;
     try {
@@ -411,6 +422,7 @@ router.patch('/edit_holidays/:id', fetchadmin, [
         if (Holiday_Start) { newHolidays.Holiday_Start = Holiday_Start };
         if (Holiday_End) { newHolidays.Holiday_End = Holiday_End };
         if (Groups) { newHolidays.Groups = Groups };
+        newHolidays.Date = Date.now()
 
         holidays = await Holidays.findByIdAndUpdate(req.params.id, { $set: newHolidays })
 
@@ -548,7 +560,8 @@ router.patch('/edit_fees_of_standard/:id', fetchadmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });;
     }
     const { Fees_Amount } = req.body;
     try {
@@ -594,7 +607,8 @@ router.post('/fetch_all_materials', fetchadmin, [
     let success = false
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     try {
         let fetchAdmin = await Admin.findById(req.admin.id)
@@ -625,7 +639,8 @@ router.post('/fetch_all_homeworks_of_the_subject', fetchadmin, [
     let success = false
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     try {
         let fetchAdmin = await Admin.findById(req.admin.id)

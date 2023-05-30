@@ -23,13 +23,14 @@ const timeRegex = /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/;
 
 // Router :- 1  set exam timetable  http://localhost:5050/api/examtimetable/set_examtimetable
 router.post('/set_examtimetable', fetchAdmin, [
-    body("Standard", "Standard should be atlist 3 characters").isLength({ min: 2, max: 2 }),
+    body("Standard", "Standard should be atlist 2 characters").isLength({ min: 2, max: 2 }),
     body("Exam_Type", "Exam_Type should be atlist 3 characters").isLength({ min: 3 }),
     body("Exam_TimeTable", "Please enter the timetable").isArray(),
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Standard, Exam_Type, Exam_TimeTable } = req.body
     try {
@@ -141,11 +142,12 @@ router.post('/set_examtimetable', fetchAdmin, [
 
 // Router 2:- fetch all exam timetable standerd wise http://localhost:5050/api/examtimetable/fetch_all_examtimetable
 router.post('/fetch_all_examtimetable', fetchAdmin, [
-    body("Standard", "Standard should be atlist 3 characters").isLength({ min: 2, max: 2 })
+    body("Standard", "Standard should be atlist 2 characters").isLength({ min: 2, max: 2 })
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Standard } = req.body
     try {
@@ -176,7 +178,8 @@ router.patch('/edit_examtimetable/:id', fetchAdmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
 
     const { Exam_TimeTable } = req.body
@@ -292,11 +295,12 @@ router.patch('/edit_examtimetable/:id', fetchAdmin, [
 
 // Router 4:- fetch all exam timetable standerd wise http://localhost:5050/api/examtimetable/fetch_all_examtimetable_for_teachers
 router.post('/fetch_all_examtimetable_for_teachers', fetchTeachers, [
-    body("Standard", "Standard should be atlist 3 characters").isLength({ min: 2, max: 2 })
+    body("Standard", "Standard should be atlist 2 characters").isLength({ min: 2, max: 2 })
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Standard } = req.body
     try {

@@ -28,16 +28,17 @@ router.post('/create_students', fetchadmin, [
     body('S_icard_Id', 'Icard-id should be atlest 6 char').isLength({ min: 6 }),
     body('S_name', 'Name should be atlest 2 char').isLength({ min: 2 }),
     body('S_mobile_no', 'Mobile Number should be atlest 10 char').isLength({ min: 10, max: 10 }),
-    body('S_address', 'Enter a valid data').isLength({ min: 10 }),
-    body('S_standard', 'Enter a valid data').isLength({ min: 2 }),
-    body('S_Class_code', 'Enter a valid data').isLength({ min: 2 }),
-    body('S_Password', 'Enter a valid data').isLength({ min: 6 })
+    body('S_address', 'Address should be atlest 10 char').isLength({ min: 10 }),
+    body('S_standard', 'Standard should be atlest 2 char').isLength({ min: 2 }),
+    body('S_Class_code', 'Class code should be atlest 10 char').isLength({ min: 2 }),
+    body('S_Password', 'Password should be atlest 10 char').isLength({ min: 6 })
 ], async (req, res) => {
     let success = false;
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { S_icard_Id, S_name, S_mobile_no, S_address, S_standard, S_Class_code, S_Password } = req.body;
     try {
@@ -98,13 +99,14 @@ router.post('/create_students', fetchadmin, [
 // Router 2:- Student Login  http://localhost:5050/api/students/student_login
 router.post('/student_login', [
     body('S_icard_Id', 'Icard-id should be atlest 6 char').isLength({ min: 6 }),
-    body('S_Password', 'Enter a valid data').isLength({ min: 6 })
+    body('S_Password', 'Password should be atlest 10 char').isLength({ min: 6 })
 ], async (req, res) => {
     let success = false;
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { S_icard_Id, S_Password } = req.body;
     try {
@@ -204,7 +206,8 @@ router.post('/send_complain_to_teacher', fetchStudent, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
 
     const { Complain_title, Complain_descriptio, T_icard_Id } = req.body;
@@ -300,7 +303,8 @@ router.patch('/edit_complain/:id', fetchStudent, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Complain_title, Complain_descriptio } = req.body;
 
@@ -331,6 +335,7 @@ router.patch('/edit_complain/:id', fetchStudent, [
         if (Complain_title) { newComplain.Complain_title = Complain_title };
         if (Complain_descriptio) { newComplain.Complain_descriptio = Complain_descriptio };
         if (T_icard_Id) { newComplain.T_icard_Id = T_icard_Id };
+        newComplain.Date = Date.now()
 
         complain = await Student_complain_box.findByIdAndUpdate(req.params.id, { $set: newComplain })
 
@@ -401,16 +406,17 @@ router.patch('/update_student_details/:id', fetchadmin, [
     body('S_icard_Id', 'Icard-id should be atlest 6 char').isLength({ min: 6 }),
     body('S_name', 'Name should be atlest 2 char').isLength({ min: 2 }),
     body('S_mobile_no', 'Mobile Number should be atlest 10 char').isLength({ min: 10, max: 10 }),
-    body('S_address', 'Enter a valid data').isLength({ min: 10 }),
-    body('S_standard', 'Enter a valid data').isLength({ min: 2 }),
-    body('S_Class_code', 'Enter a valid data').isLength({ min: 2 }),
-    body('S_Password', 'Enter a valid data').isLength({ min: 6 })
+    body('S_address', 'Address should be atlest 10 char').isLength({ min: 10 }),
+    body('S_standard', 'Standard should be atlest 2 char').isLength({ min: 2 }),
+    body('S_Class_code', 'Class code should be atlest 10 char').isLength({ min: 2 }),
+    body('S_Password', 'Password should be atlest 10 char').isLength({ min: 6 })
 ], async (req, res) => {
     let success = false;
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { S_icard_Id, S_name, S_mobile_no, S_address, S_standard, S_Class_code, S_Password } = req.body;
 
@@ -595,7 +601,8 @@ router.post('/fetch_fees', fetchStudent, [
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     try {
         const { Standard } = req.body;
@@ -626,7 +633,8 @@ router.post('/fetch_all_materials_of_the_subjects', fetchStudent, [
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     let success = false
     try {

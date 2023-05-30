@@ -19,7 +19,8 @@ router.post('/create_subject', fetchadmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Standard, Subject_Name, Subject_Code } = req.body;
 
@@ -66,7 +67,8 @@ router.post('/get_all_subjects_class_wise', fetchadmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Standard } = req.body;
     try {

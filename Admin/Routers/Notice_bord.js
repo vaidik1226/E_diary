@@ -22,7 +22,8 @@ router.post('/send_notice', fetchadmin, noticeAttach.single("notice_attach"), [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Notice_title, Notice_description, Group } = req.body;
 
@@ -85,7 +86,8 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Notice_title, Notice_description, Group } = req.body;
     try {

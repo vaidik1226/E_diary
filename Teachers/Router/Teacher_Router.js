@@ -27,10 +27,10 @@ router.post('/create_teacher', fetchadmin, [
     body('T_icard_Id', 'icard-Id should be atlest 6 char').isLength({ min: 6 }),
     body('T_name', 'Name should be atlest 2 char').isLength({ min: 2 }),
     body('T_mobile_no', 'Mobile No. should be atlest 10 char').isLength({ min: 10, max: 10 }),
-    body('T_address', 'Enter a valid data').isLength({ min: 10 }),
-    body('Subject_code', 'Enter a valid data').isLength({ min: 4 }),
-    body('T_Class_code', 'Enter a valid data').isLength({ min: 2 }),
-    body('T_Password', 'Enter a valid data').isLength({ min: 6 })
+    body('T_address', 'Address should be atlest 10 char').isLength({ min: 10 }),
+    body('Subject_code', 'Subject code should be atlest 4 char').isLength({ min: 4 }),
+    body('T_Class_code', 'Classs code should be atlest 3 char').isLength({ min: 3 }),
+    body('T_Password', 'Password should be atlest 6 char').isLength({ min: 6 })
 ], async (req, res) => {
     let success = false;
     // If there are errors, return Bad request and the errors
@@ -104,14 +104,15 @@ router.post('/create_teacher', fetchadmin, [
 
 // Router 2:- Teachers Login  http://localhost:5050/api/teachers/teachers_login
 router.post('/teachers_login', [
-    body('T_icard_Id', 'Icard-id should be atlest 6 char').isLength({ min: 6 }),
-    body('T_Password', 'Enter a valid data').isLength({ min: 6 })
+    body('T_icard_Id', 'icard-Id should be atlest 6 char').isLength({ min: 6 }),
+    body('T_Password', 'Password should be atlest 6 char').isLength({ min: 6 })
 ], async (req, res) => {
     let success = false;
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { T_icard_Id, T_Password } = req.body;
     try {
@@ -181,9 +182,14 @@ router.post('/get_all_notice_of_teachers', fetchTeachers, async (req, res) => {
 
 // Router 4:- Fetch all Students class wise http://localhost:5050/api/teachers/fetch_all_students
 router.post('/fetch_all_students', fetchTeachers, [
-    body('S_Class_code', 'Enter a valid data').isLength({ min: 2 })
+    body('S_Class_code', 'Classs code should be atlest 3 char').isLength({ min: 3 })
 ], async (req, res) => {
     let success = false;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
+    }
     const { S_Class_code } = req.body
     try {
         const fetchTeacher = await Teachers.findById(req.teacher.id);
@@ -250,7 +256,8 @@ router.post('/send_complain_to_teacher', fetchTeachers, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Complain_title, Complain_descriptio, S_icard_Id } = req.body;
 
@@ -325,7 +332,8 @@ router.patch('/edit_complain/:id', fetchTeachers, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Complain_title, Complain_descriptio } = req.body;
 
@@ -356,6 +364,7 @@ router.patch('/edit_complain/:id', fetchTeachers, [
         if (Complain_title) { newComplain.Complain_title = Complain_title };
         if (Complain_descriptio) { newComplain.Complain_descriptio = Complain_descriptio };
         if (S_icard_Id) { newComplain.S_icard_Id = S_icard_Id };
+        newComplain.Date = Date.now()
 
         complain = await Teacher_complain_box.findByIdAndUpdate(req.params.id, { $set: newComplain })
 
@@ -422,19 +431,20 @@ router.delete('/delete_complain/:id', fetchTeachers, async (req, res) => {
 
 // Router:-10  Update Teacher Details http://localhost:5050/api/teachers/update_teacher_details/:{id}
 router.patch('/update_teacher_details/:id', fetchadmin, [
-    body('T_icard_Id', 'Icard-id should be atlest 6 char').isLength({ min: 6 }),
+    body('T_icard_Id', 'icard-Id should be atlest 6 char').isLength({ min: 6 }),
     body('T_name', 'Name should be atlest 2 char').isLength({ min: 2 }),
-    body('T_mobile_no', 'Mobile Number should be atlest 10 char').isLength({ min: 10, max: 10 }),
-    body('T_address', 'Enter a valid data').isLength({ min: 10 }),
-    body('Subject_code', 'Enter a valid data').isLength({ min: 2 }),
-    body('T_Class_code', 'Enter a valid data').isLength({ min: 2 }),
-    body('T_Password', 'Enter a valid data').isLength({ min: 6 })
+    body('T_mobile_no', 'Mobile No. should be atlest 10 char').isLength({ min: 10, max: 10 }),
+    body('T_address', 'Address should be atlest 10 char').isLength({ min: 10 }),
+    body('Subject_code', 'Subject code should be atlest 4 char').isLength({ min: 4 }),
+    body('T_Class_code', 'Classs code should be atlest 3 char').isLength({ min: 3 }),
+    body('T_Password', 'Password should be atlest 6 char').isLength({ min: 6 })
 ], async (req, res) => {
     let success = false;
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { T_icard_Id, T_name, T_mobile_no, T_address, Subject_code, T_Class_code, T_Password } = req.body;
 
@@ -629,7 +639,8 @@ router.post('/add_material', fetchTeachers, Material_Files.single("material_file
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { T_icard_Id, Subject_code, Class_code, Material_title, Material_description } = req.body;
 
@@ -705,7 +716,8 @@ router.patch('/edit_material/:id', fetchTeachers, Material_Files.single("materia
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
 
     const { T_icard_Id, Subject_code, Class_code, Material_title, Material_description } = req.body;
@@ -756,6 +768,7 @@ router.patch('/edit_material/:id', fetchTeachers, Material_Files.single("materia
             if (Material_title) { newMaterial.Material_title = Material_title };
             if (Material_description) { newMaterial.Material_description = Material_description };
             if (filename) { newMaterial.Material_files = filename };
+            newMaterial.Date = Date.now()
 
             const dirPath = __dirname;  // C: \Users\admin\Desktop\E_diary\Teachers\Router
             const dirname = dirPath.slice(0, -16);
@@ -876,7 +889,8 @@ router.post('/send_homework', fetchTeachers, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { T_icard_Id, Subject_code, Class_code, Homework_title, Homework_description, Homework_given_date, Homework_due_date } = req.body;
 
@@ -947,7 +961,8 @@ router.patch('/edit_homework/:id', fetchTeachers, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
 
     const { T_icard_Id, Subject_code, Class_code, Homework_title, Homework_description, Homework_given_date, Homework_due_date } = req.body;
@@ -994,6 +1009,7 @@ router.patch('/edit_homework/:id', fetchTeachers, [
             if (Homework_description) { newHomework.Homework_description = Homework_description };
             if (Homework_given_date) { newHomework.Homework_given_date = Homework_given_date };
             if (Homework_due_date) { newHomework.Homework_due_date = Homework_due_date };
+            newHomework.Date = Date.now();
 
             editHomework = await Homework.findByIdAndUpdate(req.params.id, { $set: newHomework })
 
@@ -1062,7 +1078,8 @@ router.post('/fetch_all_homeworks', fetchTeachers, [
     let success = false
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Class_code } = req.body;
     try {
@@ -1112,10 +1129,6 @@ router.post('/fetch_all_homeworks', fetchTeachers, [
 // Router 22:- Fetch all details of the login students http://localhost:5050/api/teachers/fetch_all_details_of_login_teacher
 router.post('/fetch_all_details_of_login_teacher', fetchTeachers, async (req, res) => {
     let success = false
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
     try {
         let teacher = await Teachers.findById(req.teacher.id)
         if (!teacher) {
@@ -1138,7 +1151,8 @@ router.post('/get_all_subjects_class_wise', fetchTeachers, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
     const { Standard } = req.body;
     try {

@@ -23,7 +23,8 @@ router.post('/make_timetable', fetchAdmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
 
     const { Class_code, Daily_TimeTable } = req.body
@@ -119,7 +120,8 @@ router.post('/fetch_all_timetable_by_classes', fetchAdmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
 
     const { Class_code } = req.body
@@ -168,7 +170,8 @@ router.patch('/edit_timetable/:id', fetchAdmin, [
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
 
     const { Daily_TimeTable } = req.body
@@ -266,8 +269,7 @@ router.post('/fetch_timetable_for_students', fetchStudents, async (req, res) => 
 
 
 // Router 5:- Fetch all lectures of the teacher http://localhost:5050/api/timetable/fetch_all_lectures_of_the_teachers
-router.post('/fetch_all_lectures_of_the_teachers', fetchTeachers, [
-], async (req, res) => {
+router.post('/fetch_all_lectures_of_the_teachers', fetchTeachers, async (req, res) => {
     let success = false;
 
     const fetchteacher = await Teachers.findById(req.teacher.id);

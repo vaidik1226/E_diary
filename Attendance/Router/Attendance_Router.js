@@ -14,14 +14,15 @@ const JWT_SECRET = process.env.JWT_SECRET;
 // Router 1:- Take attendance of the students  http://localhost:5050/api/attendance/take_attendance
 router.post('/take_attendance', fetchTeachers, [
     body("Class_code", "Class code should be atlist 3 characters").isLength({ min: 3 }),
-    body("T_icard_Id", "Teachers id should be atlist 5 characters").isLength({ min: 3 }),
+    body("T_icard_Id", "Teachers id should be atlist 6 characters").isLength({ min: 6 }),
     body("Attend", "Please enter the attenddance").isArray(),
 ], async (req, res) => {
     let success = false;
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        success = false;
+        return res.status(400).json({ success, error: errors.array() });
     }
 
     const { Class_code, T_icard_Id, Attend } = req.body
