@@ -67,7 +67,7 @@ router.post('/get_all_notice', fetchadmin, async (req, res) => {
         }
 
         const allnotice = await NoticeBord.find({ Admin_id: req.admin.id });
-        res.json(allnotice);
+        res.json(allnotice.reverse());
     } catch (error) {
         console.error(error.message);
         res.status(500).send("some error occured");
@@ -110,6 +110,7 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
         if (Notice_description) { newNotice.Notice_description = Notice_description };
         if (filename) { newNotice.Notice_attechments = filename };
         if (Group) { newNotice.Group = Group };
+        newNotice.Date = Date.now()
 
         const dirPath = __dirname;   //C:\Users\admin\Desktop\E_diary\Admin\Routers
         const dirname = dirPath.slice(0, -13);
