@@ -778,7 +778,6 @@ router.patch('/edit_material/:id', fetchTeachers, Material_Files.single("materia
                     console.error(err);
                     success = false;
                     res.status(404).json({ success, error: 'Error deleting file' });
-                    return;
                 }
             });
 
@@ -833,7 +832,6 @@ router.delete('/delete_material/:id', fetchTeachers, async (req, res) => {
                 console.error(err);
                 success = false;
                 res.status(404).json({ success, error: 'Error deleting file' });
-                return;
             }
         });
 

@@ -122,7 +122,6 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
                 console.error(err);
                 success = false;
                 res.status(404).json({ success, error: 'Error deleting file' });
-                return;
             }
         });
 
@@ -173,7 +172,6 @@ router.delete('/delete_notice/:id', fetchadmin, async (req, res) => {
                 console.error(err);
                 success = false;
                 res.status(404).json({ success, error: 'Error deleting file' });
-                return;
             }
         });
 
@@ -188,6 +186,33 @@ router.delete('/delete_notice/:id', fetchadmin, async (req, res) => {
         const authtoken = jwt.sign(data, JWT_SECRET);
         success = true;
         res.json({ success, authtoken });
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("some error occured");
+    }
+})
+
+
+// Router %:- Fetch latest 2 notices http://localhost:5050/api/noticeBord/get_two_notice
+router.post('/get_two_notice', fetchadmin, async (req, res) => {
+    try {
+        const fetchAdmin = await Admin.findById(req.admin.id);
+        if (!fetchAdmin) {
+            success = false
+            return res.status(400).json({ success, error: "Sorry U should ligin first" })
+        }
+
+        const allnotice = await NoticeBord.find({ Admin_id: req.admin.id });
+        const note = allnotice.reverse()
+        const latest = []
+        
+        for (let index = 0; index < 2; index++) {
+            const element = note[index];
+            latest.push(element)
+        }
+
+        res.json(latest)
 
     } catch (error) {
         console.error(error.message);
