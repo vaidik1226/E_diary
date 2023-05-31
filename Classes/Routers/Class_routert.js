@@ -101,40 +101,81 @@ router.post('/get_all_classes', fetchadmin, async (req, res) => {
 })
 
 // Router:3 Delete classes http://localhost:5050/api/classcode/delete_class/:{id}
-// router.delete('/delete_class/:id', fetchadmin, async (req, res) => {
-//     let success = false;
-//     const { id } = req.params
-//     try {
-//         const admin = await Admin.findById(req.admin.id)
-//         if (!admin) {
-//             success = false
-//             return res.status(400).json({ error: "Please try to login with correct credentials" });
-//         }
+router.delete('/delete_class/:id', fetchadmin, async (req, res) => {
+    let success = false;
+    const { id } = req.params
+    try {
+        const admin = await Admin.findById(req.admin.id)
+        if (!admin) {
+            success = false
+            return res.status(400).json({ error: "Please try to login with correct credentials" });
+        }
 
-//         const classes = await Classes.findById(id)
-//         if (!classes) {
-//             success = false
-//             return res.status(400).json({ error: "This class code is already exist" });
-//         }
+        const classes = await Classes.findById(id)
+        if (!classes) {
+            success = false
+            return res.status(400).json({ error: "This class code is already exist" });
+        }
 
-//         const deleteClass = await Classes.findByIdAndDelete(id)
+        const deleteClass = await Classes.findByIdAndDelete(id)
 
-//         const data = {
-//             deleteClass: {
-//                 id: deleteClass.id
-//             }
-//         }
+        const data = {
+            deleteClass: {
+                id: deleteClass.id
+            }
+        }
 
-//         const authtoken = jwt.sign(data, JWT_SECRET);
-//         success = true;
-//         res.json({ success, authtoken });
+        const authtoken = jwt.sign(data, JWT_SECRET);
+        success = true;
+        res.json({ success, authtoken });
 
 
-//     } catch (error) {
-//         console.error(error.message);
-//         res.status(500).send("Internal Server Error");
-//     }
-// })
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+})
+
+
+// Router:4 Get ClassCode of perticuler standard http://localhost:5050/api/classcode/get_all_classes_std_wise
+router.post('/get_all_classes_std_wise', fetchadmin, [
+    body('Standard', 'please enter a standard').isLength({ min: 2, max: 2 })
+], async (req, res) => {
+    let success = false;
+    // If there are errors, return Bad request and the errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { Standard } = req.body;
+    try {
+        const admin = await Admin.findById(req.admin.id)
+        if (!admin) {
+            success = false
+            return res.status(400).json({ error: "Please try to login with correct credentials" });
+        }
+
+        const classes = await Classes.find({ Standard: Standard })
+        if (!classes) {
+            success = false
+            return res.status(400).json({ error: "This class code is already exist" });
+        }
+
+        const allclassCode = []
+        for (let index = 0; index < classes.length; index++) {
+            const element = classes[index].ClassCode;
+            for (let index = 0; index < element.length; index++) {
+                const element2 = element[index];
+                allclassCode.push(element2)
+            }
+        }
+        res.json(allclassCode);
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+})
 
 
 module.exports = router

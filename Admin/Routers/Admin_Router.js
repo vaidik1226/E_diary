@@ -391,8 +391,8 @@ router.post('/get_all_holidays', fetchadmin, async (req, res) => {
 router.patch('/edit_holidays/:id', fetchadmin, [
     body('Holiday_title', 'Title should be atlest 6 char').isLength({ min: 6 }),
     body('Holiday_description', 'Decription should be atlest 10 char').isLength({ min: 10 }),
-    body('Holiday_Start', 'Please Chooes the starting time').isDate(), // format should br yyyy-mm-dd
-    body('Holiday_End', 'Please Chooes the ending time').isDate(),  // format should br yyyy-mm-dd
+    body('Holiday_Start', 'Please Chooes the starting time').isDate(), // format should be yyyy-mm-dd
+    body('Holiday_End', 'Please Chooes the ending time').isDate(),  // format should be yyyy-mm-dd
     body('Groups', 'Please Chooes the group').isLength({ min: 3 })
 ], async (req, res) => {
     let success = false;
