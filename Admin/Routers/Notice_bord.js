@@ -33,7 +33,7 @@ router.post('/send_notice', fetchadmin, noticeAttach.single("notice_attach"), [
         const filePath = dirname + '/Notices/' + filename;
         fs.unlink(filePath, (err) => {
             if (err) {
-               
+
                 success = false;
                 return res.status(404).json({ success, error: 'Error deleting file' });
             }
@@ -50,7 +50,7 @@ router.post('/send_notice', fetchadmin, noticeAttach.single("notice_attach"), [
         const filePath = dirname + '/Notices/' + filename;
         fs.unlink(filePath, (err) => {
             if (err) {
-               
+
                 success = false;
                 return res.status(404).json({ success, error: 'Error deleting file' });
             }
@@ -82,7 +82,7 @@ router.post('/send_notice', fetchadmin, noticeAttach.single("notice_attach"), [
         const filePath = dirname + '/Notices/' + filename;
         fs.unlink(filePath, (err) => {
             if (err) {
-               
+
                 success = false;
                 return res.status(404).json({ success, error: 'Error deleting file' });
             }
@@ -132,7 +132,7 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
         const filePath = dirname + '/Notices/' + filename;
         fs.unlink(filePath, (err) => {
             if (err) {
-               
+
                 success = false;
                 return res.status(404).json({ success, error: 'Error deleting file' });
             }
@@ -149,7 +149,7 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
             const filePath = dirname + '/Notices/' + filename;
             fs.unlink(filePath, (err) => {
                 if (err) {
-                   
+
                     success = false;
                     return res.status(404).json({ success, error: 'Error deleting file' });
                 }
@@ -165,7 +165,7 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
             const filePath = dirname + '/Notices/' + filename;
             fs.unlink(filePath, (err) => {
                 if (err) {
-                   
+
                     success = false;
                     return res.status(404).json({ success, error: 'Error deleting file' });
                 }
