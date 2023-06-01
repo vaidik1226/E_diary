@@ -292,13 +292,21 @@ router.post('/get_two_notice', fetchadmin, async (req, res) => {
         const note = allnotice.reverse()
         const latest = []
 
-        for (let index = 0; index < 2; index++) {
-            const element = note[index];
-            latest.push(element)
+        if (allnotice.length == 0) {
+            res.json("Data Not Found")
         }
-
-        res.json(latest)
-
+        else {
+            if (note.length <= 2) {
+                res.json(note)
+            }
+            else {
+                for (let index = 0; index < 2; index++) {
+                    const element = note[index];
+                    latest.push(element)
+                }
+                res.json(latest)
+            }
+        }
     } catch (error) {
         res.status(500).send("some error occured");
     }
