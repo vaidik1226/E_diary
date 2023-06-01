@@ -20,9 +20,24 @@ router.post('/send_notice', fetchadmin, noticeAttach.single("notice_attach"), [
 ], async (req, res) => {
     let success = false;
     // If there are errors, return Bad request and the errors
+    if (!req.file || !req.file.filename) {
+        success = false;
+        return res.status(400).json({ success, error: "Please provide file" })
+    }
+    const { filename } = req.file;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         success = false;
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -13);
+        const filePath = dirname + '/Notices/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: errors.array() });
     }
     const { Notice_title, Notice_description, Group } = req.body;
@@ -30,11 +45,21 @@ router.post('/send_notice', fetchadmin, noticeAttach.single("notice_attach"), [
     const fetchAdmin = await Admin.findById(req.admin.id);
     if (!fetchAdmin) {
         success = false
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -13);
+        const filePath = dirname + '/Notices/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: "Sorry U should ligin first" })
     }
 
     try {
-        const { filename } = req.file;
+
         let Notice_attechments = filename
 
         let noticeBord = new NoticeBord({
@@ -52,7 +77,16 @@ router.post('/send_notice', fetchadmin, noticeAttach.single("notice_attach"), [
         success = true;
         res.json({ success, authtoken });
     } catch (error) {
-        console.error(error.message);
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -13);
+        const filePath = dirname + '/Notices/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         res.status(500).send("some error occured");
     }
 })
@@ -84,9 +118,25 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
 ], async (req, res) => {
     let success = false;
     // If there are errors, return Bad request and the errors
+    if (!req.file || !req.file.filename) {
+        success = false;
+        return res.status(400).json({ success, error: "Please provide file" })
+    }
+    const { filename } = req.file;
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         success = false;
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -13);
+        const filePath = dirname + '/Notices/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: errors.array() });
     }
     const { Notice_title, Notice_description, Group } = req.body;
@@ -94,18 +144,38 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
         const fetchAdmin = await Admin.findById(req.admin.id);
         if (!fetchAdmin) {
             success = false
+            const dirPath = __dirname;
+            const dirname = dirPath.slice(0, -13);
+            const filePath = dirname + '/Notices/' + filename;
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error(err);
+                    success = false;
+                    res.status(404).json({ success, error: 'Error deleting file' });
+                }
+            });
             return res.status(400).json({ success, error: "Sorry U should ligin first" })
         }
 
         let notice = await NoticeBord.findById(req.params.id);
         if (!notice) {
             success = false;
+            const dirPath = __dirname;
+            const dirname = dirPath.slice(0, -13);
+            const filePath = dirname + '/Notices/' + filename;
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error(err);
+                    success = false;
+                    res.status(404).json({ success, error: 'Error deleting file' });
+                }
+            });
             return res.status(404).json({ success, error: "not found" })
         }
 
         const nameOfFile = notice.Notice_attechments;
 
-        const { filename } = req.file;
+
 
         const newNotice = {};
         if (Notice_title) { newNotice.Notice_title = Notice_title };
@@ -138,7 +208,16 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
         res.json({ success, authtoken });
 
     } catch (error) {
-        console.error(error.message);
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -13);
+        const filePath = dirname + '/Notices/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         res.status(500).send("some error occured");
     }
 
@@ -188,13 +267,12 @@ router.delete('/delete_notice/:id', fetchadmin, async (req, res) => {
         res.json({ success, authtoken });
 
     } catch (error) {
-        console.error(error.message);
         res.status(500).send("some error occured");
     }
 })
 
 
-// Router %:- Fetch latest 2 notices http://localhost:5050/api/noticeBord/get_two_notice
+// Router 5:- Fetch latest 2 notices http://localhost:5050/api/noticeBord/get_two_notice
 router.post('/get_two_notice', fetchadmin, async (req, res) => {
     try {
         const fetchAdmin = await Admin.findById(req.admin.id);
@@ -206,7 +284,7 @@ router.post('/get_two_notice', fetchadmin, async (req, res) => {
         const allnotice = await NoticeBord.find({ Admin_id: req.admin.id });
         const note = allnotice.reverse()
         const latest = []
-        
+
         for (let index = 0; index < 2; index++) {
             const element = note[index];
             latest.push(element)
@@ -215,7 +293,6 @@ router.post('/get_two_notice', fetchadmin, async (req, res) => {
         res.json(latest)
 
     } catch (error) {
-        console.error(error.message);
         res.status(500).send("some error occured");
     }
 })

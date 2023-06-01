@@ -636,10 +636,25 @@ router.post('/add_material', fetchTeachers, Material_Files.single("material_file
     body('Material_description', 'Please enter apt description').isLength({ min: 3 }),
 ], async (req, res) => {
     let success = false;
+    if (!req.file || !req.file.filename) {
+        success = false;
+        return res.status(400).json({ success, error: "Please provide file" })
+    }
+    const { filename } = req.file;
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         success = false;
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: errors.array() });
     }
     const { T_icard_Id, Subject_code, Class_code, Material_title, Material_description } = req.body;
@@ -647,18 +662,48 @@ router.post('/add_material', fetchTeachers, Material_Files.single("material_file
     const fetchTeacher = await Teachers.findById(req.teacher.id);
     if (!fetchTeacher) {
         success = false
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: "Sorry U should ligin first" })
     }
 
     let t_icard_id = await Teachers.findOne({ T_icard_Id: req.body.T_icard_Id });
     if (!t_icard_id) {
         success = false
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: "Sorry you cannot use this id" })
     }
 
     let subjectCode = await Subjects.findOne({ Subject_Code: Subject_code })
     if (!subjectCode) {
         success = false
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: "Please Chooes correct subject code" })
     }
 
@@ -666,6 +711,16 @@ router.post('/add_material', fetchTeachers, Material_Files.single("material_file
     let std = await Classes.findOne({ Standard: standard })
     if (!std) {
         success = false
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: "Please Chooes correct class code" })
     }
 
@@ -674,7 +729,6 @@ router.post('/add_material', fetchTeachers, Material_Files.single("material_file
     if (ClassCode.includes(Class_code)) {
 
         try {
-            const { filename } = req.file;
 
             const Material_files = filename
 
@@ -693,12 +747,31 @@ router.post('/add_material', fetchTeachers, Material_Files.single("material_file
             success = true;
             res.json({ success, authtoken });
         } catch (error) {
-            console.error(error.message);
+            const dirPath = __dirname;
+            const dirname = dirPath.slice(0, -16);
+            const filePath = dirname + '/Material/' + filename;
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error(err);
+                    success = false;
+                    res.status(404).json({ success, error: 'Error deleting file' });
+                }
+            });
             res.status(500).send("some error occured");
         }
 
     } else {
         success = false
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ error: "Class Code doesn't exist" });
     }
 })
@@ -713,10 +786,26 @@ router.patch('/edit_material/:id', fetchTeachers, Material_Files.single("materia
     body('Material_description', 'Please enter apt description').isLength({ min: 3 }),
 ], async (req, res) => {
     let success = false;
+    if (!req.file || !req.file.filename) {
+        success = false;
+        return res.status(400).json({ success, error: "Please provide file" })
+    }
+    const { filename } = req.file;
+    
     // If there are errors, return Bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         success = false;
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: errors.array() });
     }
 
@@ -724,24 +813,64 @@ router.patch('/edit_material/:id', fetchTeachers, Material_Files.single("materia
     const fetchTeacher = await Teachers.findById(req.teacher.id);
     if (!fetchTeacher) {
         success = false
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: "Sorry U should ligin first" })
     }
 
     let material = await Material.findById(req.params.id);
     if (!material) {
         success = false;
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(404).json({ success, error: "not found" })
     }
 
     let t_icard_id = await Teachers.findOne({ T_icard_Id: req.body.T_icard_Id });
     if (!t_icard_id) {
         success = false
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: "Sorry you cannot use this id" })
     }
 
     let subjectCode = await Subjects.findOne({ Subject_Code: Subject_code })
     if (!subjectCode) {
         success = false
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: "Please Chooes correct subject code" })
     }
 
@@ -750,6 +879,16 @@ router.patch('/edit_material/:id', fetchTeachers, Material_Files.single("materia
     let std = await Classes.findOne({ Standard: standard })
     if (!std) {
         success = false
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ success, error: "Please Chooes correct class code" })
     }
 
@@ -758,8 +897,6 @@ router.patch('/edit_material/:id', fetchTeachers, Material_Files.single("materia
     if (ClassCode.includes(Class_code)) {
         try {
             const nameOfFile = material.Material_files;
-
-            const { filename } = req.file;
 
             const newMaterial = {};
             if (T_icard_Id) { newMaterial.T_icard_Id = T_icard_Id };
@@ -794,11 +931,30 @@ router.patch('/edit_material/:id', fetchTeachers, Material_Files.single("materia
             res.json({ success, authtoken });
 
         } catch (error) {
-            console.error(error.message);
+            const dirPath = __dirname;
+            const dirname = dirPath.slice(0, -16);
+            const filePath = dirname + '/Material/' + filename;
+            fs.unlink(filePath, (err) => {
+                if (err) {
+                    console.error(err);
+                    success = false;
+                    res.status(404).json({ success, error: 'Error deleting file' });
+                }
+            });
             res.status(500).send("some error occured");
         }
     } else {
         success = false
+        const dirPath = __dirname;
+        const dirname = dirPath.slice(0, -16);
+        const filePath = dirname + '/Material/' + filename;
+        fs.unlink(filePath, (err) => {
+            if (err) {
+                console.error(err);
+                success = false;
+                res.status(404).json({ success, error: 'Error deleting file' });
+            }
+        });
         return res.status(400).json({ error: "Class Code doesn't exist" });
     }
 
@@ -1199,5 +1355,6 @@ router.post('/get_all_classes', fetchTeachers, async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 })
+
 
 module.exports = router
