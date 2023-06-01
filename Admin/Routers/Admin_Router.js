@@ -379,7 +379,7 @@ router.post('/get_all_holidays', fetchadmin, async (req, res) => {
             return res.status(400).json({ success, error: "Sorry U should ligin first" })
         }
         const allholidays = await Holidays.find();
-        res.json(allholidays);
+        res.json(allholidays.reverse());
     } catch (error) {
         console.error(error.message);
         res.status(500).send("some error occured");
@@ -714,7 +714,7 @@ router.post('/fetch_count_of_the_classes', fetchadmin, async (req, res) => {
             const element = allClasses[i];
             data.push(element.ClassCode)
         }
-        
+
         let total = 0;
         data.forEach(arr => {
             arr.forEach(() => {
