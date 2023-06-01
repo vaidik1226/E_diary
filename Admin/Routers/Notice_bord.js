@@ -33,9 +33,9 @@ router.post('/send_notice', fetchadmin, noticeAttach.single("notice_attach"), [
         const filePath = dirname + '/Notices/' + filename;
         fs.unlink(filePath, (err) => {
             if (err) {
-                console.error(err);
+               
                 success = false;
-                res.status(404).json({ success, error: 'Error deleting file' });
+                return res.status(404).json({ success, error: 'Error deleting file' });
             }
         });
         return res.status(400).json({ success, error: errors.array() });
@@ -50,9 +50,9 @@ router.post('/send_notice', fetchadmin, noticeAttach.single("notice_attach"), [
         const filePath = dirname + '/Notices/' + filename;
         fs.unlink(filePath, (err) => {
             if (err) {
-                console.error(err);
+               
                 success = false;
-                res.status(404).json({ success, error: 'Error deleting file' });
+                return res.status(404).json({ success, error: 'Error deleting file' });
             }
         });
         return res.status(400).json({ success, error: "Sorry U should ligin first" })
@@ -82,9 +82,9 @@ router.post('/send_notice', fetchadmin, noticeAttach.single("notice_attach"), [
         const filePath = dirname + '/Notices/' + filename;
         fs.unlink(filePath, (err) => {
             if (err) {
-                console.error(err);
+               
                 success = false;
-                res.status(404).json({ success, error: 'Error deleting file' });
+                return res.status(404).json({ success, error: 'Error deleting file' });
             }
         });
         res.status(500).send("some error occured");
@@ -132,9 +132,9 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
         const filePath = dirname + '/Notices/' + filename;
         fs.unlink(filePath, (err) => {
             if (err) {
-                console.error(err);
+               
                 success = false;
-                res.status(404).json({ success, error: 'Error deleting file' });
+                return res.status(404).json({ success, error: 'Error deleting file' });
             }
         });
         return res.status(400).json({ success, error: errors.array() });
@@ -149,9 +149,9 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
             const filePath = dirname + '/Notices/' + filename;
             fs.unlink(filePath, (err) => {
                 if (err) {
-                    console.error(err);
+                   
                     success = false;
-                    res.status(404).json({ success, error: 'Error deleting file' });
+                    return res.status(404).json({ success, error: 'Error deleting file' });
                 }
             });
             return res.status(400).json({ success, error: "Sorry U should ligin first" })
@@ -165,9 +165,9 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
             const filePath = dirname + '/Notices/' + filename;
             fs.unlink(filePath, (err) => {
                 if (err) {
-                    console.error(err);
+                   
                     success = false;
-                    res.status(404).json({ success, error: 'Error deleting file' });
+                    return res.status(404).json({ success, error: 'Error deleting file' });
                 }
             });
             return res.status(404).json({ success, error: "not found" })
@@ -187,25 +187,34 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
         const dirPath = __dirname;   //C:\Users\admin\Desktop\E_diary\Admin\Routers
         const dirname = dirPath.slice(0, -13);
         const filePath = dirname + '/Notices/' + nameOfFile;    //C:\Users\admin\Desktop\E_diary
-        fs.unlink(filePath, (err) => {
+        fs.unlink(filePath, async (err) => {
             if (err) {
-                console.error(err);
                 success = false;
-                res.status(404).json({ success, error: 'Error deleting file' });
+                const dirPath = __dirname;
+                const dirname = dirPath.slice(0, -13);
+                const filePath = dirname + '/Notices/' + filename;
+                fs.unlink(filePath, (err) => {
+                    if (err) {
+                        success = false;
+                        return res.status(404).json({ success, error: 'Error deleting file' });
+                    }
+                });
+                return res.status(404).json({ success, error: 'File not found' });
+            }
+            else {
+                noticeBord = await NoticeBord.findByIdAndUpdate(req.params.id, { $set: newNotice })
+
+                const data = {
+                    noticeBord: {
+                        id: noticeBord.id
+                    }
+                }
+
+                const authtoken = jwt.sign(data, JWT_SECRET);
+                success = true;
+                res.json({ success, authtoken });
             }
         });
-
-        noticeBord = await NoticeBord.findByIdAndUpdate(req.params.id, { $set: newNotice })
-
-        const data = {
-            noticeBord: {
-                id: noticeBord.id
-            }
-        }
-
-        const authtoken = jwt.sign(data, JWT_SECRET);
-        success = true;
-        res.json({ success, authtoken });
 
     } catch (error) {
         const dirPath = __dirname;
@@ -213,9 +222,8 @@ router.patch('/edit_notice/:id', fetchadmin, noticeAttach.single("notice_attach"
         const filePath = dirname + '/Notices/' + filename;
         fs.unlink(filePath, (err) => {
             if (err) {
-                console.error(err);
                 success = false;
-                res.status(404).json({ success, error: 'Error deleting file' });
+                return res.status(404).json({ success, error: 'Error deleting file' });
             }
         });
         res.status(500).send("some error occured");
@@ -246,26 +254,25 @@ router.delete('/delete_notice/:id', fetchadmin, async (req, res) => {
         const dirPath = __dirname;   //C:\Users\admin\Desktop\E_diary\Admin\Routers
         const dirname = dirPath.slice(0, -13);
         const filePath = dirname + '/Notices/' + nameOfFile;    //C:\Users\admin\Desktop\E_diary
-        fs.unlink(filePath, (err) => {
+        fs.unlink(filePath, async (err) => {
             if (err) {
-                console.error(err);
                 success = false;
-                res.status(404).json({ success, error: 'Error deleting file' });
+                return res.status(404).json({ success, error: 'Error in deleting file' });
+            }
+            else {
+                noticeBord = await NoticeBord.findByIdAndDelete(id)
+
+                const data = {
+                    noticeBord: {
+                        id: noticeBord.id
+                    }
+                }
+
+                const authtoken = jwt.sign(data, JWT_SECRET);
+                success = true;
+                res.json({ success, authtoken });
             }
         });
-
-        noticeBord = await NoticeBord.findByIdAndDelete(id)
-
-        const data = {
-            noticeBord: {
-                id: noticeBord.id
-            }
-        }
-
-        const authtoken = jwt.sign(data, JWT_SECRET);
-        success = true;
-        res.json({ success, authtoken });
-
     } catch (error) {
         res.status(500).send("some error occured");
     }

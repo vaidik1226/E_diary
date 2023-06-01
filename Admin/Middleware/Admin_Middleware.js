@@ -15,7 +15,6 @@ const fetchadmin = (req, res, next) => {
         next();
     } catch (err) {
         const data = jwt.verify(token, JWT_SECRET);
-        console.log(err ,data)
         res.status(401).send({ error: err })
     }
 
